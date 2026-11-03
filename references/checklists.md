@@ -56,6 +56,30 @@ For every vest date:
 
 If multiple grants vest on the same date, never forecast from only one grant.
 
+## Expected final-tax method
+
+Prefer the result from Skatteverket's e-service or official tax calculator when it can represent the forecast inputs.
+
+If hand-modelling is necessary, label the result `ESTIMATE` and explicitly include or consider:
+
+```text
+taxable earned income after grundavdrag
+municipal income tax
+state income tax where applicable
+church fee where applicable
+burial fee
+public-service fee
+jobbskatteavdrag
+capital income
+capital-deficit tax reduction
+applicable gift/a-kassa/other tax reductions
+other material tax items
+```
+
+Every year-specific rate, threshold, cap, or formula must come from the year-specific constants reference or a current Skatteverket source. Mark anything else `UNVERIFIED`.
+
+When the model indicates under-withholding, present alternatives rather than assuming lower withholding is desirable. A voluntary extra tax payment (`fyllnadsinbetalning`) can be an alternative to increasing withholding. Its dates and interest rules remain `UNVERIFIED` unless current Skatteverket guidance is sourced.
+
 ## Final validation
 
 ### Historical reconciliation
@@ -79,9 +103,17 @@ If multiple grants vest on the same date, never forecast from only one grant.
 ### Capital
 
 - mortgage interest is the employee's own full-year share;
+- loan-interest deductibility follows the current year-specific rule; prior-year treatment is not carried forward;
 - ISK uses statutory capital-base logic or is labelled as estimated;
 - material capital gains/losses and rental income are included;
+- capital-deficit reduction uses the applicable tiered current-year rule from the constants reference;
 - tax reductions are supported.
+
+### Final tax
+
+- use an official Skatteverket final-tax result when available;
+- otherwise the hand-model lists every material component and labels unverified inputs;
+- do not compare payroll withholding against an unexplained single `expected final tax` number.
 
 ### Form
 
@@ -104,12 +136,13 @@ Avoid:
 6. Double-counting the same RSU in YTD payroll and the future forecast.
 7. Using a current ISK balance as the exact statutory capital base.
 8. Applying tax-year allowances manually without confirming how the e-service expects the field.
-9. Entering BRF monthly fees as mortgage interest.
-10. Carrying prior-year loan/deduction items forward when they no longer apply.
+9. Treating interest as deductible because it was deductible in a prior year.
+10. Entering BRF monthly fees as mortgage interest.
 11. Ignoring non-Databricks income.
 12. Treating jämkning as a reduction in final tax.
-13. Failing to update the model after a material forecast change.
-14. Optimizing to the last krona when major inputs remain uncertain.
+13. Using an unexplained hand-modelled final-tax number.
+14. Failing to update the model after a material forecast change.
+15. Optimizing to the last krona when major inputs remain uncertain.
 
 ## Assistant output template
 
@@ -148,8 +181,18 @@ A-kassa:
 Other:
 ```
 
-### D. Application fields
+### D. Final-tax basis
 
-List every non-zero field/label and proposed value. Mark estimates `ESTIMATE`.
+```text
+Method: Skatteverket official result | hand-model ESTIMATE
+Expected final tax:
+Unverified components:
+Under/over-withholding result:
+Alternative if under-withheld: updated withholding | fyllnadsinbetalning | other
+```
 
-Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, and the employee understands kvarskatt risk.
+### E. Application fields
+
+List every non-zero field/label and proposed value. Mark estimates `ESTIMATE` and unresolved inputs `UNVERIFIED`.
+
+Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, expected final tax is defensible, and the employee understands kvarskatt risk.

@@ -81,6 +81,12 @@ Source: Skatteverket — Jämkning.
 
 If the main benefit is expected from an early-next-year RSU vest, evaluate the next-year application during the preceding October–November window.
 
+## Fyllnadsinbetalning
+
+A voluntary extra tax payment can be an alternative when the forecast shows under-withholding, particularly when changing payroll withholding is not the preferred operational path.
+
+The **payment dates, interest start dates/rules, thresholds, and other timing mechanics are UNVERIFIED** in this skill. Do not advise timing or interest consequences without checking current Skatteverket guidance.
+
 ## Values still UNVERIFIED in this reference
 
 The following were not supplied as verified 2026 values and must not be inferred from memory:

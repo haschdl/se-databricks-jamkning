@@ -22,16 +22,16 @@ This skill supports planning and data preparation. It does not replace Skattever
 
 ## Read these references when needed
 
-- [Databricks payroll and Shareworks](references/databricks-payroll.md) — payroll codes, RSU release extracts, reconciliation, compensation forecasting.
+- [Databricks payroll and Shareworks](references/databricks-payroll.md) — payroll codes, RSU release extracts, reconciliation, engångsskatt diagnostics, compensation forecasting.
 - [2026 tax constants](references/2026-tax-constants.md) — year-specific rates, thresholds, ISK values, and deadlines. Re-verify for other tax years.
-- [Skatteverket form fields](references/skatteverket-form-fields.md) — current field mappings and form-entry guidance.
-- [Checklists](references/checklists.md) — evidence package, RSU checklist, final validation, common mistakes, and output template.
+- [Skatteverket form fields](references/skatteverket-form-fields.md) — current e-service field mappings and form-entry guidance.
+- [Checklists](references/checklists.md) — evidence package, final-tax method, RSU checklist, final validation, common mistakes, and output template.
 
 ## Core concept
 
 **Jämkning changes preliminary withholding, not final tax liability.**
 
-Swedish payroll normally withholds tax using standard tax tables. One-time payments may use the separate **engångsskatt** table. A jämkning decision from Skatteverket changes how the main payer withholds tax so that preliminary tax for the year is closer to expected final tax.
+Swedish payroll normally withholds tax using standard tax tables. One-time payments may use the separate **engångsskatt** table. A jämkning decision from Skatteverket changes how withholding is calculated so that preliminary tax for the year is closer to expected final tax.
 
 Important:
 
@@ -49,7 +49,7 @@ Model jämkning when one or more of these apply:
 
 - large RSU vestings;
 - large bonus or commission payments;
-- high one-time withholding on RSUs or bonus;
+- one-time withholding that may not match expected marginal tax;
 - substantial mortgage interest;
 - multiple employers or payers;
 - significant taxable income outside Databricks;
@@ -113,20 +113,20 @@ Collect:
 - completed Shareworks RSU release summary;
 - grant details / vest schedules for remaining awards.
 
-Use [references/databricks-payroll.md](references/databricks-payroll.md) for exact extracts, payroll codes, RSU reconciliation, FX/FMV handling, and forecast construction.
+Use [references/databricks-payroll.md](references/databricks-payroll.md) for exact extracts, payroll codes, årslön capture, RSU reconciliation, engångsskatt diagnostics, FX/FMV handling, and forecast construction.
 
 ## Mortgage interest and capital
 
 Collect:
 
-- expected full-year mortgage interest attributable to the employee;
+- expected full-year interest attributable to the employee;
 - ISK quarterly values and deposits/transfers where available;
 - capital gains/losses;
 - rental income;
 - interest/dividends outside ISK;
 - other taxable investment events.
 
-For ISK calculations and current-year constants, use [references/2026-tax-constants.md](references/2026-tax-constants.md).
+For ISK calculations and loan-interest rules, use [references/2026-tax-constants.md](references/2026-tax-constants.md). Do not carry prior-year deduction rules forward by assumption.
 
 ## Other income and reductions
 
@@ -193,15 +193,41 @@ interest/dividend income
 = net capital position
 ```
 
+Use the year-specific constants reference to determine whether loan interest is deductible. Do not assume that an interest deduction available in a prior year still applies.
+
 Do not simply subtract mortgage interest from salary.
 
 ## Tax reductions
 
-Model relevant reductions separately, for example capital-deficit reduction, gifts, a-kassa, and other eligible reductions.
+Model relevant reductions separately, for example capital-deficit reduction, gifts, a-kassa, and other eligible reductions. Use only verified current-year rules.
 
 # 5. Estimate over- or under-withholding
 
-Calculate or obtain a defensible estimate of expected final tax, then compare it with tax already withheld and likely remaining payroll withholding.
+## Preferred method: use an official final-tax calculation
+
+Prefer Skatteverket's e-service or official tax calculator for the **expected final tax** calculation when it can represent the employee's forecast inputs. Use the same full-year income, capital, deductions, and reductions that will be used in the jämkning analysis.
+
+Treat the resulting final-tax figure as the comparison point rather than recreating the entire Swedish tax engine from memory.
+
+## If hand-modelling is necessary
+
+Label the result as an `ESTIMATE` and show the calculation components explicitly. At minimum, consider:
+
+- taxable earned income after grundavdrag;
+- municipal income tax;
+- state income tax where applicable;
+- church fee where applicable;
+- burial fee;
+- public-service fee;
+- jobbskatteavdrag;
+- capital income;
+- capital-deficit tax reduction;
+- gifts, a-kassa, or other applicable tax reductions;
+- any other material tax item in the employee's situation.
+
+Every tax-year-specific rate, threshold, cap, or formula must come from the year-specific reference or a current Skatteverket source. If a component is not verified, mark it `UNVERIFIED`; do not fill it from memory.
+
+## Compare final tax with withholding
 
 ```text
 expected final tax
@@ -219,9 +245,17 @@ expected normal remaining withholding
 
 A positive result indicates potential value from jämkning; a negative result indicates under-withholding risk.
 
-For each remaining RSU vest, compare normal payroll withholding with the expected tax outcome rather than assuming the vest is automatically over-withheld.
+For RSUs, use [references/databricks-payroll.md](references/databricks-payroll.md) to compare engångsskatt with estimated **marginal** tax and to check whether payroll used an appropriate årslön. Do not infer over-withholding from the engångsskatt percentage alone.
 
-Tax-method corrections and current-year rates are handled by issues #1, #2, and #4; do not invent missing rules.
+## If the model shows under-withholding
+
+Do not force a jämkning strategy whose only purpose is to lower withholding. Depending on timing and the employee's situation, options can include:
+
+- a new/updated jämkning that results in more appropriate withholding;
+- asking payroll about additional withholding where operationally available;
+- a voluntary extra tax payment (`fyllnadsinbetalning`).
+
+The dates and interest rules for fyllnadsinbetalning are **UNVERIFIED** unless they are explicitly sourced from current Skatteverket guidance. Do not advise a payment date or interest outcome from memory. See the year-specific constants reference.
 
 # 6. Handle uncertainty explicitly
 
@@ -245,7 +279,7 @@ For uncertain external income, run sensitivity scenarios. If the result is sensi
 
 Use the current labels shown by Skatteverket. Do not rely on remembered field numbers without verification.
 
-Use [references/skatteverket-form-fields.md](references/skatteverket-form-fields.md) for the currently documented mappings and known verification gaps.
+Use [references/skatteverket-form-fields.md](references/skatteverket-form-fields.md) for the verified e-service mappings and known open items.
 
 General rules:
 
@@ -258,7 +292,7 @@ General rules:
 
 ## Övriga upplysningar
 
-Use free text only for material assumptions that are not obvious from the numeric boxes, for example a large future RSU vest or an estimated ISK amount.
+Use free text only for material assumptions that are not obvious from the numeric boxes, for example a future RSU vest or an estimated/open ISK treatment.
 
 Keep it concise and factual.
 
@@ -268,13 +302,15 @@ Before recommending submission, verify:
 
 - YTD Skatteverket income and withholding reconcile with payroll;
 - completed Shareworks releases reconcile with Databricks RSU payroll events;
+- payroll årslön has been checked where engångsskatt is material;
 - all remaining vestings are included;
 - salary changes and commission assumptions are applied in the correct periods;
 - benefits, allowances, and salary exchange are treated consistently with payroll;
 - external income has been considered;
 - mortgage interest and ISK are based on defensible full-year estimates;
+- expected final tax comes from an official calculation or a fully itemized hand-model;
 - no income or deduction is counted twice;
-- estimates are clearly identified.
+- estimates and unverified inputs are clearly identified.
 
 Use [references/checklists.md](references/checklists.md) for the detailed evidence and validation checklists.
 
@@ -301,6 +337,9 @@ YTD employment income reported to Skatteverket:
 YTD tax withheld:
 Databricks payroll match:
 RSU/Shareworks match:
+Payroll årslön used:
+Expected main-employer årslön:
+Main/secondary payer status:
 Cutoff date:
 ```
 
@@ -328,22 +367,14 @@ Other:
 
 ## D. Application fields
 
-List every non-zero Skatteverket field/label and its proposed value. Mark estimated fields `ESTIMATE`.
+List every non-zero Skatteverket field/label and its proposed value. Mark estimated fields `ESTIMATE` and unresolved inputs `UNVERIFIED`.
 
-Do not recommend submission until actual YTD income and tax are reconciled, all known future RSU vestings are included, material external income has been considered, and the employee understands the `kvarskatt` risk.
+Do not recommend submission until actual YTD income and tax are reconciled, all known future RSU vestings are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, expected final tax is defensible, and the employee understands the `kvarskatt` risk.
 
 # 11. Tax-year verification rule
 
 Never reuse tax-year constants without checking current Skatteverket guidance.
 
-Use the year-specific reference for the current implementation, and re-verify at minimum:
-
-- engångsskatt thresholds/rates;
-- state income-tax threshold;
-- municipal-tax assumptions if modelling tax independently;
-- ISK schablon rate and tax-free base;
-- interest-deduction rules;
-- gift/a-kassa rules;
-- jämkning deadlines.
+Use the year-specific reference for the current implementation. If the requested tax year differs, treat the existing rates, thresholds, deadlines, deduction rules, and field mappings as unavailable until re-verified.
 
 The workflow is reusable. Tax parameters are not.
