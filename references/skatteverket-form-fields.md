@@ -1,71 +1,68 @@
-# Skatteverket jämkning form fields
+# Skatteverket jämkning e-service fields — Tax year 2026
 
-This reference centralizes field mappings that were previously embedded in `SKILL.md`.
+**Tax year:** 2026  
+**Verified:** 2026-11-03  
+**Source:** Skatteverket `Jämkning 2026` e-service review page, verified in November 2026.
 
-Some field numbers still require independent verification against the current SKV 4302 form/e-service. Issue #4 owns that verification. Prefer current labels in the live e-service over remembered field numbers.
+This mapping applies to the **Jämkning 2026 e-service only**. Numbering on the paper form **SKV 4302 is UNVERIFIED** and must not be assumed to match.
 
 ## Tjänst — income and tax so far
 
-Original mapping:
+- `02 Lön och förmåner` → employment income and benefits so far this year.
+- `01 Avdragen skatt` → preliminary tax withheld so far this year.
 
-- `02 Lön och förmåner` → YTD total employment income.
-- `01 Avdragen skatt` → YTD preliminary tax withheld.
-
-Use actual YTD values from **Mina inkomstuppgifter → Sammanställning inkomstuppgifter**.
-
-Other fields should be zero/blank unless they genuinely apply.
+Use actual YTD values from **Mina inkomstuppgifter → Sammanställning inkomstuppgifter** and reconcile the reporting cutoff with payroll.
 
 ## Tjänst — income for the rest of the year
 
-Original mapping:
+- `07 Lön och förmåner` → employment income and benefits for the rest of the year, including future taxable RSU vestings.
+- `96 – varav från huvudutbetalare` → portion from the main payer.
+- `94 – inkomster från ruta 07, 08 och 14 som det inte dras skatt från` → income in those boxes from which no tax is withheld.
 
-- `07 Lön och förmåner` → remaining taxable employment income, including future RSU vestings.
-- `96 varav från huvudutbetalare` → amount expected from the main payer.
-- `94 ... som det inte dras skatt från` → income for which no withholding is made.
-
-Use only the remainder of the year. Do not repeat income already included in YTD actuals.
-
-For a Databricks employee with no other main payer, the amount attributed to the main payer will often equal the Databricks portion of remaining employment income.
-
-## Tjänst — deductions/reductions
-
-Original mapping:
-
-- `76 Gåva`
-- `75 Avgift till a-kassa`
-
-Enter only if applicable and eligible for the current tax year.
+Use only income expected for the remainder of the year. Do not repeat amounts already included in YTD actuals.
 
 ## Kapital
-
-Original mapping:
 
 - `39 Schablonintäkt investeringssparkonto`
 - `34 Ränteutgifter för lån med säkerhet m.m.`
 
-Issue #4 must verify both field mappings and the e-service treatment of the ISK tax-free allowance.
+For box 39, follow the open-item handling in [2026-tax-constants.md](2026-tax-constants.md): enter **gross schablonintäkt** until the e-service treatment of the ISK tax-free deduction is verified.
 
-Do not enter BRF monthly fees as mortgage interest.
+### OPEN — ISK fribelopp handling
+
+It is **UNVERIFIED** whether the jämkning e-service applies the ISK tax-free deduction automatically.
+
+Until resolved, add a concise note in `Övriga upplysningar` stating that:
+
+- box 39 contains gross schablonintäkt;
+- automatic application of the ISK tax-free deduction in the jämkning e-service is unverified;
+- the resulting estimate may conservatively overstate capital tax by up to **30% of the applicable deduction**.
+
+Generic wording, with no personal application data:
+
+```text
+Box 39 contains gross ISK schablonintäkt. It is unverified whether the jämkning e-service applies the ISK tax-free deduction automatically, so the estimate may conservatively overstate capital tax by up to 30% of the applicable deduction.
+```
+
+Do not manually subtract the deduction from box 39 unless the e-service behavior is verified.
+
+## Underlag för skattereduktion
+
+- `76 Gåva`
+- `75 Avgift till a-kassa`
+
+Enter only when applicable and eligible. Eligibility rules and any tax-year-specific thresholds not listed in [2026-tax-constants.md](2026-tax-constants.md) remain **UNVERIFIED**.
 
 ## Övriga upplysningar
 
-Use this only for material assumptions not obvious from the numeric entries, for example:
+Use free text for material assumptions not obvious from the numeric entries, such as:
 
-- a large future RSU vest included in remaining employment income;
-- an ISK schablonintäkt that is estimated because final annual broker data is unavailable.
+- a future RSU vest included in remaining employment income;
+- an estimated ISK amount;
+- the open ISK-fribelopp handling described above.
 
-Keep free text short, factual, and free of unnecessary personal detail.
+Keep wording short, factual, and free of unnecessary personal detail.
 
-## Verification target
+## Maintenance rule
 
-Issue #4 should independently verify at least:
-
-- 01 Avdragen skatt;
-- 02 Lön och förmåner hittills;
-- 07 Lön och förmåner resten av året;
-- 94 income with no withholding;
-- 96 main payer;
-- 34 secured-loan interest;
-- 39 ISK schablonintäkt;
-- 75 a-kassa;
-- 76 gift.
+Do not use these field codes for another tax year without checking that year's live e-service. For paper **SKV 4302**, field numbering remains **UNVERIFIED** until separately sourced.
