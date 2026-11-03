@@ -11,6 +11,7 @@ This file is the only source in this skill for 2026-specific rates, thresholds, 
 - Skatteverket — Ränteavdrag: https://www.skatteverket.se/ranteavdrag
 - Skatteverket — Investeringssparkonto: https://www.skatteverket.se/investeringssparkonto
 - Skatteverket — Jämkning: https://www.skatteverket.se/jamkning
+- Skatteverket — Statlig inkomstskatt 2026: https://www.skatteverket.se/funktioner/svarpavanligafragor/privat/beloppochprocent/privatbeloppfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html
 
 ## Engångsskatt
 
@@ -23,6 +24,16 @@ For **column 1**, main income, employee under 66:
 - If a jämkning decision sets a percentage, that percentage also applies to one-time payments.
 
 Source: Skatteverket — Engångsbelopp.
+
+## Marginal-rate comparison for RSU diagnostics
+
+- The 2026 state income-tax marginal component is **20%** on taxable earned income above the applicable state-tax threshold.
+- The threshold itself remains **UNVERIFIED in this skill** and must not be inferred from memory.
+- Municipal tax, church fee, and burial fee vary by employee/location and are not constants in this file; obtain the applicable values rather than assuming them.
+
+Source for the state income-tax rate: Skatteverket — Statlig inkomstskatt 2026.
+
+When comparing RSU engångsskatt with estimated marginal tax, use the applicable municipal rate + applicable church fee + burial fee + the state income-tax component where applicable. Do not compare engångsskatt with the employee's average/effective tax rate.
 
 ## Interest deductions and capital-deficit reduction
 

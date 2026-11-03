@@ -1,6 +1,8 @@
 # Databricks payroll and Shareworks reference
 
-Use this reference for source extraction, RSU reconciliation, and compensation forecasting. These payroll codes are based on observed Databricks Sweden payslips and must be reconciled against the employee's own documents because payroll semantics can change.
+Use this reference for source extraction, RSU reconciliation, engångsskatt diagnostics, and compensation forecasting. Payroll codes are based on observed Databricks Sweden payslips and must be reconciled against the employee's own documents because payroll semantics can change.
+
+For all tax-year-specific rates and thresholds, use [2026-tax-constants.md](2026-tax-constants.md). Do not repeat or infer those values here.
 
 ## Databricks payslip extracts
 
@@ -24,7 +26,11 @@ Also capture monthly and YTD totals for:
 - gross pay;
 - taxable benefits;
 - deducted tax;
-- tax table.
+- tax table;
+- **årslön used by payroll** for engångsskatt, if shown, obtainable from payroll, or inferable from the withholding band;
+- whether Databricks is the **main employer/payer** for the payment being analysed.
+
+If the exact payroll årslön is not visible, mark it as `UNKNOWN` rather than assuming that base salary is the årslön.
 
 ## Completed Shareworks vestings
 
@@ -78,6 +84,55 @@ If Shareworks and payroll differ, check:
 - whether the compared values use the same gross/net basis.
 
 Do not proceed until a material difference is understood or explicitly bounded.
+
+## Engångsskatt and årslön diagnostic
+
+Do not assume that a high engångsskatt rate means the RSU is materially over-withheld.
+
+### 1. Reconstruct expected main-employer årslön
+
+For the applicable tax year, use the definition in the year-specific constants reference. Build expected årslön from the employee's **main employer only**, including the components required by that definition. Compare this with the årslön payroll appears to have used.
+
+Do not substitute base salary for årslön.
+
+### 2. Compare engångsskatt with marginal tax, not effective tax
+
+For an RSU vest processed by the main employer:
+
+```text
+withholding gap
+= applicable engångsskatt rate
+- estimated marginal employment-tax rate
+```
+
+Estimate the marginal employment-tax rate using:
+
+```text
+applicable municipal income-tax rate
++ applicable church fee
++ burial fee
++ state income-tax component where applicable
+```
+
+Use the state component from the year-specific constants reference. Obtain employee/location-specific municipal, church, and burial values rather than inventing them.
+
+Do **not** compare the engångsskatt rate with the employee's average/effective full-year tax rate.
+
+### 3. Under-withholding diagnostic — payroll årslön understated
+
+Flag `KVARSKATT RISK` when payroll's årslön appears too low because it omitted material income that belongs in the main-employer annual estimate, such as known future/earlier vestings, commission, benefits, or other required one-time payments.
+
+A lower engångsskatt band caused by an understated årslön can make an RSU **under-withheld**. In this case, jämkning should not be presented primarily as a way to reduce withholding.
+
+### 4. Potential over-withholding diagnostic — vest pushes årslön into a higher band
+
+If base salary alone is below a threshold but the RSU and other main-employer compensation push expected årslön into a higher engångsskatt band, payroll can apply that higher rate to the **entire one-time payment**.
+
+Treat this as a **potential** over-withholding case only. Quantify the gap against the estimated marginal rate. If the gap is small, say so; do not characterize the withholding as obviously excessive.
+
+### 5. Main versus secondary payer
+
+Determine whether the one-time payment comes from the main payer before using the engångsskatt table. For a secondary payer, use the separate rule in the year-specific constants reference.
 
 ## Future RSU vestings
 
@@ -135,5 +190,6 @@ Do not use total gross payroll as a proxy for commission.
 - Prefer Skatteverket's reported YTD employment income and tax as historical actuals.
 - Use payslips to reconcile composition and timing.
 - Use Shareworks to validate completed RSU events and forecast future ones.
+- Reconcile payroll's årslön assumption against the expected main-employer annual income before interpreting engångsskatt.
 - State the cutoff date whenever systems are not aligned to the same payroll/reporting period.
 - Never count an RSU event both in YTD actuals and again in the remaining-year forecast.

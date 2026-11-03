@@ -11,6 +11,7 @@
   latest-payslip.pdf
   recent-payslips-used-for-commission-forecast.pdf
   compensation-letter.pdf
+  payroll-arslon-basis-or-explanation   # if available
 
 /Shareworks
   RSU Release Summary - YTD.xlsx
@@ -43,6 +44,12 @@ For every vest date:
 [ ] compare with Shareworks local value when available
 [ ] match completed vest to Databricks payroll
 [ ] confirm payroll one-time tax base
+[ ] capture or infer årslön used by payroll; mark UNKNOWN if unavailable
+[ ] determine whether payer is main or secondary
+[ ] compare payroll årslön with expected full-year main-employer income
+[ ] compare engångsskatt rate with estimated marginal rate, not effective rate
+[ ] check for understated-årslön under-withholding / kvarskatt risk
+[ ] check whether the vest pushes årslön into a higher band; quantify any potential over-withholding gap
 [ ] confirm tax withheld
 [ ] include future vest in annual tjänsteinkomst
 ```
@@ -56,6 +63,7 @@ If multiple grants vest on the same date, never forecast from only one grant.
 - Skatteverket YTD income matches the latest comparable Databricks payroll YTD income.
 - Skatteverket YTD withheld tax matches the latest comparable payroll period.
 - Completed Shareworks releases reconcile to RSU payroll events.
+- Payroll årslön assumptions have been checked before drawing conclusions from engångsskatt.
 - Cutoff dates are explicit if reporting timing differs.
 
 ### Forecast
@@ -89,17 +97,19 @@ If multiple grants vest on the same date, never forecast from only one grant.
 Avoid:
 
 1. Using only base salary and forgetting RSUs.
-2. Using net shares delivered instead of gross taxable vest value.
-3. Treating tax-withheld shares as reducing taxable employment income.
-4. Double-counting the same RSU in YTD payroll and the future forecast.
-5. Using a current ISK balance as the exact statutory capital base.
-6. Applying tax-year allowances manually without confirming how the e-service expects the field.
-7. Entering BRF monthly fees as mortgage interest.
-8. Carrying prior-year loan/deduction items forward when they no longer apply.
-9. Ignoring non-Databricks income.
-10. Treating jämkning as a reduction in final tax.
-11. Failing to update the model after a material forecast change.
-12. Optimizing to the last krona when major inputs remain uncertain.
+2. Treating base salary as payroll årslön for engångsskatt.
+3. Assuming a high engångsskatt percentage is automatically excessive instead of comparing it with marginal tax.
+4. Using net shares delivered instead of gross taxable vest value.
+5. Treating tax-withheld shares as reducing taxable employment income.
+6. Double-counting the same RSU in YTD payroll and the future forecast.
+7. Using a current ISK balance as the exact statutory capital base.
+8. Applying tax-year allowances manually without confirming how the e-service expects the field.
+9. Entering BRF monthly fees as mortgage interest.
+10. Carrying prior-year loan/deduction items forward when they no longer apply.
+11. Ignoring non-Databricks income.
+12. Treating jämkning as a reduction in final tax.
+13. Failing to update the model after a material forecast change.
+14. Optimizing to the last krona when major inputs remain uncertain.
 
 ## Assistant output template
 
@@ -110,6 +120,9 @@ YTD employment income reported to Skatteverket:
 YTD tax withheld:
 Databricks payroll match:
 RSU/Shareworks match:
+Payroll årslön used:
+Expected main-employer årslön:
+Main/secondary payer status:
 Cutoff date:
 ```
 
@@ -139,4 +152,4 @@ Other:
 
 List every non-zero field/label and proposed value. Mark estimates `ESTIMATE`.
 
-Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, material external income has been considered, and the employee understands kvarskatt risk.
+Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, and the employee understands kvarskatt risk.
