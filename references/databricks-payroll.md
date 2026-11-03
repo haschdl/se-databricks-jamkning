@@ -1,8 +1,10 @@
 # Databricks payroll and Shareworks reference
 
-Use this reference for source extraction, RSU reconciliation, engångsskatt diagnostics, and compensation forecasting. Payroll codes are based on observed Databricks Sweden payslips and must be reconciled against the employee's own documents because payroll semantics can change.
+Use this reference for source extraction, RSU reconciliation, engångsskatt diagnostics, Databricks tender/share-sale basis, and compensation forecasting. Payroll codes are based on observed Databricks Sweden payslips and must be reconciled against the employee's own documents because payroll semantics can change.
 
 For all tax-year-specific rates and thresholds, use [2026-tax-constants.md](2026-tax-constants.md). Do not repeat or infer those values here.
+
+Source for Swedish share cost-basis method: Skatteverket — Räkna ut omkostnadsbelopp: https://www.skatteverket.se/privat/skatter/vardepapper/deklareraaktierochovrigavardepapper/omkostnadsbelopp.4.12815e4f14a62bc048fa7bc.html
 
 ## Databricks payslip extracts
 
@@ -163,6 +165,65 @@ For FX:
 
 Do not substitute a spot-market FX rate when historical payroll demonstrates a fixed internal conversion basis.
 
+## Databricks tender offers and other share sales
+
+A Databricks employee tender offer is a **capital event**, not another RSU vest. It can create a capital gain for which ordinary payroll withholding does not cover the gain. Treat this as a material `KVARSKATT RISK` unless the employee has separately accounted for the tax.
+
+### Source data
+
+Collect:
+
+- tender offer / sale confirmation;
+- number and kind/class of shares sold;
+- sale price and fees;
+- SEK sale proceeds or the evidence needed to convert proceeds consistently to SEK;
+- every RSU vest/acquisition for **all shares of the same kind** held before the sale;
+- shares acquired at each vest;
+- SEK value per share at each vest used as the acquisition value;
+- prior sales or other transactions that changed the remaining same-kind share pool.
+
+Do not collect only the vest records for the shares the employee thinks were sold. Swedish cost basis is not determined by selecting RSU lots.
+
+### Genomsnittsmetoden — average cost basis
+
+Use the Swedish **genomsnittsmetoden** across all shares of the same kind the employee holds.
+
+For RSU shares, build the acquisition-cost pool from the SEK value at each vest. If same-kind shares were acquired through several vest dates at different FMVs, aggregate those SEK acquisition values across the whole remaining pool.
+
+Conceptually:
+
+```text
+total remaining acquisition cost for same-kind shares
+÷ total remaining same-kind shares held before sale
+= average cost per share
+```
+
+Then:
+
+```text
+average cost per share
+× number of shares sold
+= cost basis allocated to the sale
+```
+
+And:
+
+```text
+SEK sale proceeds
+- allocated average cost basis
+= capital gain or loss
+```
+
+This is **not** the per-lot basis of the specific vest dates from which the sold shares originated. If acquisitions and sales are interleaved, update the remaining average-cost pool after each transaction.
+
+Calculate separately for different kinds/classes of shares.
+
+### Withholding treatment
+
+Do not treat the capital gain as covered by RSU/engångsskatt withholding. Model the capital gain separately with **no payroll tax withheld on the gain**, unless the actual transaction documents show a separate tax payment that must be reconciled.
+
+Include the resulting capital gain/loss in the full-year tax model and re-evaluate whether the employee is actually over- or under-withheld.
+
 ## Compensation forecast
 
 Collect:
@@ -191,5 +252,6 @@ Do not use total gross payroll as a proxy for commission.
 - Use payslips to reconcile composition and timing.
 - Use Shareworks to validate completed RSU events and forecast future ones.
 - Reconcile payroll's årslön assumption against the expected main-employer annual income before interpreting engångsskatt.
+- Treat tender/share-sale gain separately from employment income and RSU withholding.
 - State the cutoff date whenever systems are not aligned to the same payroll/reporting period.
 - Never count an RSU event both in YTD actuals and again in the remaining-year forecast.

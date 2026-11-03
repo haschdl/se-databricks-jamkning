@@ -22,10 +22,10 @@ This skill supports planning and data preparation. It does not replace Skattever
 
 ## Read these references when needed
 
-- [Databricks payroll and Shareworks](references/databricks-payroll.md) — payroll codes, RSU release extracts, reconciliation, engångsskatt diagnostics, compensation forecasting.
+- [Databricks payroll and Shareworks](references/databricks-payroll.md) — payroll codes, RSU release extracts, reconciliation, engångsskatt diagnostics, tender-offer cost basis, compensation forecasting.
 - [2026 tax constants](references/2026-tax-constants.md) — year-specific rates, thresholds, ISK values, and deadlines. Re-verify for other tax years.
 - [Skatteverket form fields](references/skatteverket-form-fields.md) — current e-service field mappings and form-entry guidance.
-- [Checklists](references/checklists.md) — evidence package, final-tax method, RSU checklist, final validation, common mistakes, and output template.
+- [Checklists](references/checklists.md) — evidence package, final-tax method, RSU/tender checklists, final validation, common mistakes, and output template.
 
 ## Core concept
 
@@ -50,6 +50,7 @@ Model jämkning when one or more of these apply:
 - large RSU vestings;
 - large bonus or commission payments;
 - one-time withholding that may not match expected marginal tax;
+- a Databricks employee tender offer or other share sale that can create an unwitheld capital gain;
 - substantial mortgage interest;
 - multiple employers or payers;
 - significant taxable income outside Databricks;
@@ -58,17 +59,18 @@ Model jämkning when one or more of these apply:
 - compensation changed substantially during the year;
 - the employee joined or left Databricks during the year.
 
-Jämkning may have limited value when compensation is almost entirely fixed salary, withholding has historically matched final tax closely, there are no meaningful deductions or other income, and no large payment remains in the year.
+Jämkning may have limited value when compensation is almost entirely fixed salary, withholding has historically matched final tax closely, there are no meaningful deductions or other income, and no large payment or capital event remains in the year.
 
 Ask:
 
 1. How much tax has already been withheld?
 2. What taxable compensation remains?
 3. Are large RSU vestings or other one-time payments still coming?
-4. What would payroll likely withhold without jämkning?
-5. What deductions and capital items affect final tax?
-6. How uncertain is non-Databricks income?
-7. Could lowering withholding create material `kvarskatt` risk?
+4. Is a tender offer or other Databricks share sale expected or already completed?
+5. What would payroll likely withhold without jämkning?
+6. What deductions and capital items affect final tax?
+7. How uncertain is non-Databricks income?
+8. Could lowering withholding create material `kvarskatt` risk?
 
 If likely excess withholding is small, the administrative value may be low.
 
@@ -76,7 +78,7 @@ If likely excess withholding is small, the administrative value may be low.
 
 The objective is not to pay less tax. It is to make preliminary withholding track expected final tax more closely.
 
-Lower withholding gives the employee more cash during the year and avoids tying up money until a refund. The main risk is underestimating taxable income or overestimating deductions, which can create `kvarskatt`.
+Lower withholding gives the employee more cash during the year and avoids tying up money until a refund. The main risk is underestimating taxable income or overestimating deductions, which can create `kvarskatt`. Capital gains with no payroll withholding can materially change that picture.
 
 When material inputs are uncertain:
 
@@ -86,7 +88,7 @@ When material inputs are uncertain:
 - mark estimates explicitly;
 - model at least a base case and a conservative case.
 
-For uncertain non-Databricks income, test plausible higher-income scenarios. If the recommendation changes materially, do not optimize aggressively.
+For uncertain non-Databricks income or share-sale proceeds, test plausible scenarios. If the recommendation changes materially, do not optimize aggressively.
 
 # 3. Collect source data
 
@@ -103,7 +105,7 @@ Obtain **Mina inkomstuppgifter → Sammanställning inkomstuppgifter** and captu
 
 Use this as the preferred historical starting point. Reconcile it to the latest Databricks payslip and state the cutoff date if reporting periods differ.
 
-## Databricks payroll and Shareworks
+## Databricks payroll, Shareworks, and tender events
 
 Collect:
 
@@ -111,9 +113,11 @@ Collect:
 - recent payslips needed for commission forecasting;
 - compensation letter if salary changed;
 - completed Shareworks RSU release summary;
-- grant details / vest schedules for remaining awards.
+- grant details / vest schedules for remaining awards;
+- tender-offer/sale confirmation when applicable;
+- complete acquisition/vest history for all shares of the same kind when a tender/share sale must be modelled.
 
-Use [references/databricks-payroll.md](references/databricks-payroll.md) for exact extracts, payroll codes, årslön capture, RSU reconciliation, engångsskatt diagnostics, FX/FMV handling, and forecast construction.
+Use [references/databricks-payroll.md](references/databricks-payroll.md) for exact extracts, payroll codes, årslön capture, RSU reconciliation, engångsskatt diagnostics, FX/FMV handling, tender-offer `genomsnittsmetoden`, and forecast construction.
 
 ## Mortgage interest and capital
 
@@ -121,7 +125,8 @@ Collect:
 
 - expected full-year interest attributable to the employee;
 - ISK quarterly values and deposits/transfers where available;
-- capital gains/losses;
+- Databricks tender/share-sale proceeds and cost-basis evidence;
+- other capital gains/losses;
 - rental income;
 - interest/dividends outside ISK;
 - other taxable investment events.
@@ -186,12 +191,15 @@ Keep capital separate from employment income:
 ```text
 interest/dividend income
 + ISK schablonintäkt
-+ taxable capital gains
++ Databricks tender/share-sale capital gains
++ other taxable capital gains
 + rental surplus
 - deductible interest
 - deductible capital losses
 = net capital position
 ```
+
+For a Databricks tender/share sale, use the Swedish average-cost method described in the Databricks reference. Do not assign the sold shares a per-vest lot basis.
 
 Use the year-specific constants reference to determine whether loan interest is deductible. Do not assume that an interest deduction available in a prior year still applies.
 
@@ -220,7 +228,7 @@ Label the result as an `ESTIMATE` and show the calculation components explicitly
 - burial fee;
 - public-service fee;
 - jobbskatteavdrag;
-- capital income;
+- capital income, including tender/share-sale gains;
 - capital-deficit tax reduction;
 - gifts, a-kassa, or other applicable tax reductions;
 - any other material tax item in the employee's situation.
@@ -247,6 +255,8 @@ A positive result indicates potential value from jämkning; a negative result in
 
 For RSUs, use [references/databricks-payroll.md](references/databricks-payroll.md) to compare engångsskatt with estimated **marginal** tax and to check whether payroll used an appropriate årslön. Do not infer over-withholding from the engångsskatt percentage alone.
 
+For tender/share-sale gains, do not assume payroll withholding covers the capital gain. Model the gain and its withholding separately.
+
 ## If the model shows under-withholding
 
 Do not force a jämkning strategy whose only purpose is to lower withholding. Depending on timing and the employee's situation, options can include:
@@ -270,10 +280,12 @@ Maintain an assumptions table:
 | RSU FMV | fixed/estimated | High/Medium | company valuation |
 | RSU FX | fixed/inferred | High/Medium | prior releases/payroll |
 | Commission | forecast | Medium | recent payslips |
+| Tender proceeds | actual/forecast | High/Medium | tender documents |
+| Tender average cost basis | reconstructed | High/Medium/Low | complete vest/share history |
 | Mortgage interest | forecast | Medium/High | bank |
 | ISK schablonintäkt | exact/estimate | High/Low | broker |
 
-For uncertain external income, run sensitivity scenarios. If the result is sensitive to plausible changes, use a conservative estimate or avoid aggressively lowering withholding.
+For uncertain external income, tender proceeds, or incomplete share-basis history, run sensitivity scenarios. If the result is sensitive to plausible changes, use a conservative estimate or avoid aggressively lowering withholding.
 
 # 7. Prepare the Skatteverket application
 
@@ -281,18 +293,21 @@ Use the current labels shown by Skatteverket. Do not rely on remembered field nu
 
 Use [references/skatteverket-form-fields.md](references/skatteverket-form-fields.md) for the verified e-service mappings and known open items.
 
+Use the year-specific constants reference for application timing. If the main expected benefit is an early-next-year vest, evaluate the next-year application in the prior application window rather than waiting until the vest year has started.
+
 General rules:
 
 - historical boxes use YTD actuals;
 - future-income boxes contain only the remainder of the year;
 - include future RSU vestings in remaining taxable employment income;
+- include material capital gains in the capital model/application where the e-service requires them;
 - identify the main payer correctly;
 - enter only deductions/reductions that actually apply;
 - avoid double-counting income already present in YTD actuals.
 
 ## Övriga upplysningar
 
-Use free text only for material assumptions that are not obvious from the numeric boxes, for example a future RSU vest or an estimated/open ISK treatment.
+Use free text only for material assumptions that are not obvious from the numeric boxes, for example a future RSU vest, a tender/share-sale estimate, or an estimated/open ISK treatment.
 
 Keep it concise and factual.
 
@@ -304,6 +319,8 @@ Before recommending submission, verify:
 - completed Shareworks releases reconcile with Databricks RSU payroll events;
 - payroll årslön has been checked where engångsskatt is material;
 - all remaining vestings are included;
+- tender/share-sale gains use the average cost basis across all same-kind shares rather than sold-lot basis;
+- capital gains with no payroll withholding are included in kvarskatt risk;
 - salary changes and commission assumptions are applied in the correct periods;
 - benefits, allowances, and salary exchange are treated consistently with payroll;
 - external income has been considered;
@@ -321,8 +338,11 @@ Tell the employee to:
 1. save the application receipt;
 2. save the Skatteverket decision;
 3. follow the employer/payroll process for applying the decision if required;
-4. verify that subsequent payroll reflects the decision;
-5. re-run the model after any material compensation, RSU, capital, or external-income change.
+4. verify the effect on the **next RSU vest / engångsbelopp**, not only the next regular payslip;
+5. confirm that the type of decision issued actually changes one-time withholding as intended;
+6. re-run the model after any material compensation change, RSU change, tender/share sale, other capital gain/loss, or external-income change.
+
+If the main value is expected from an early-next-year RSU vest, consult the year-specific application deadlines before the preceding application window closes.
 
 A jämkning application is not set-and-forget.
 
@@ -359,6 +379,7 @@ Projected full-year employment income:
 ```text
 Mortgage interest:
 ISK schablonintäkt:
+Databricks tender/share-sale gain:
 Other capital income/loss:
 Gifts:
 A-kassa:
@@ -369,7 +390,7 @@ Other:
 
 List every non-zero Skatteverket field/label and its proposed value. Mark estimated fields `ESTIMATE` and unresolved inputs `UNVERIFIED`.
 
-Do not recommend submission until actual YTD income and tax are reconciled, all known future RSU vestings are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, expected final tax is defensible, and the employee understands the `kvarskatt` risk.
+Do not recommend submission until actual YTD income and tax are reconciled, all known future RSU vestings are included, payroll årslön has been checked where engångsskatt is material, tender/share-sale gains are modelled when applicable, material external income has been considered, expected final tax is defensible, and the employee understands the `kvarskatt` risk.
 
 # 11. Tax-year verification rule
 

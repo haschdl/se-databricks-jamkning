@@ -18,6 +18,11 @@
   grant-detail-<grant-id>.pdf
   ...
 
+/Tender-or-Share-Sale
+  tender-or-sale-confirmation
+  same-kind-share-vest-history
+  prior-sale-history-if-applicable
+
 /Capital
   mortgage-interest-estimate.pdf-or-csv
   broker-isk-quarterly-values.csv
@@ -56,6 +61,27 @@ For every vest date:
 
 If multiple grants vest on the same date, never forecast from only one grant.
 
+## Databricks tender/share-sale checklist
+
+When a tender offer or other Databricks share sale occurs:
+
+```text
+[ ] obtain tender/sale confirmation and SEK proceeds/fees evidence
+[ ] identify the exact share kind/class sold
+[ ] collect every acquisition/vest for all same-kind shares held before sale
+[ ] use the SEK acquisition value at each vest
+[ ] include prior sales/transactions that changed the remaining share pool
+[ ] compute average cost across the entire remaining same-kind share pool
+[ ] allocate average cost per share to the number of shares sold
+[ ] do not use per-vest/per-lot basis for the sold shares
+[ ] calculate capital gain/loss from SEK proceeds minus allocated average basis
+[ ] model the gain separately from employment income
+[ ] assume no payroll tax withheld on the capital gain unless transaction evidence shows otherwise
+[ ] re-evaluate kvarskatt risk and the jämkning recommendation
+```
+
+Source for `genomsnittsmetoden`: Skatteverket — Räkna ut omkostnadsbelopp.
+
 ## Expected final-tax method
 
 Prefer the result from Skatteverket's e-service or official tax calculator when it can represent the forecast inputs.
@@ -70,7 +96,7 @@ church fee where applicable
 burial fee
 public-service fee
 jobbskatteavdrag
-capital income
+capital income, including Databricks tender/share-sale gains
 capital-deficit tax reduction
 applicable gift/a-kassa/other tax reductions
 other material tax items
@@ -98,6 +124,7 @@ When the model indicates under-withholding, present alternatives rather than ass
 - future vest value uses the documented FMV and FX assumption;
 - recurring benefits/allowances are included;
 - salary exchange is treated consistently with payroll;
+- tender/share-sale events are included or scenario-modelled;
 - external income is included or scenario-modelled.
 
 ### Capital
@@ -105,7 +132,9 @@ When the model indicates under-withholding, present alternatives rather than ass
 - mortgage interest is the employee's own full-year share;
 - loan-interest deductibility follows the current year-specific rule; prior-year treatment is not carried forward;
 - ISK uses statutory capital-base logic or is labelled as estimated;
-- material capital gains/losses and rental income are included;
+- tender/share-sale cost basis uses `genomsnittsmetoden` across all same-kind shares, not selected lots;
+- tender/share-sale capital gain is modelled with no payroll withholding unless evidence shows otherwise;
+- material other capital gains/losses and rental income are included;
 - capital-deficit reduction uses the applicable tiered current-year rule from the constants reference;
 - tax reductions are supported.
 
@@ -121,8 +150,17 @@ When the model indicates under-withholding, present alternatives rather than ass
 - future-income values cover only the remainder of the year;
 - no income is counted twice;
 - future RSU vestings are included in employment income;
+- capital gains are included where the e-service requires them;
 - main-payer amount is consistent;
 - free-text assumptions are concise and accurate.
+
+## After-submission checks
+
+- verify the next RSU vest / engångsbelopp reflects the issued decision as intended;
+- do not rely only on the next regular payslip;
+- confirm the decision type actually changes one-time withholding where that is the goal;
+- re-run the model after a compensation change, RSU change, tender/share sale, other large capital event, or material external-income change;
+- use the year-specific constants reference for application timing, including early-next-year vest planning.
 
 ## Common mistakes
 
@@ -134,15 +172,17 @@ Avoid:
 4. Using net shares delivered instead of gross taxable vest value.
 5. Treating tax-withheld shares as reducing taxable employment income.
 6. Double-counting the same RSU in YTD payroll and the future forecast.
-7. Using a current ISK balance as the exact statutory capital base.
-8. Applying tax-year allowances manually without confirming how the e-service expects the field.
-9. Treating interest as deductible because it was deductible in a prior year.
-10. Entering BRF monthly fees as mortgage interest.
-11. Ignoring non-Databricks income.
-12. Treating jämkning as a reduction in final tax.
-13. Using an unexplained hand-modelled final-tax number.
-14. Failing to update the model after a material forecast change.
-15. Optimizing to the last krona when major inputs remain uncertain.
+7. Using per-vest/per-lot basis for tender shares instead of average cost across all same-kind shares.
+8. Assuming RSU payroll withholding covers a later tender/share-sale capital gain.
+9. Using a current ISK balance as the exact statutory capital base.
+10. Applying tax-year allowances manually without confirming how the e-service expects the field.
+11. Treating interest as deductible because it was deductible in a prior year.
+12. Entering BRF monthly fees as mortgage interest.
+13. Ignoring non-Databricks income.
+14. Treating jämkning as a reduction in final tax.
+15. Using an unexplained hand-modelled final-tax number.
+16. Failing to update the model after a material forecast change.
+17. Optimizing to the last krona when major inputs remain uncertain.
 
 ## Assistant output template
 
@@ -175,6 +215,8 @@ Projected full-year employment income:
 ```text
 Mortgage interest:
 ISK schablonintäkt:
+Databricks tender/share-sale gain:
+Tender/share-sale withholding:
 Other capital income/loss:
 Gifts:
 A-kassa:
@@ -195,4 +237,4 @@ Alternative if under-withheld: updated withholding | fyllnadsinbetalning | other
 
 List every non-zero field/label and proposed value. Mark estimates `ESTIMATE` and unresolved inputs `UNVERIFIED`.
 
-Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, payroll årslön has been checked where engångsskatt is material, material external income has been considered, expected final tax is defensible, and the employee understands kvarskatt risk.
+Do not recommend submission until actual YTD income and tax reconcile, all known future RSUs are included, payroll årslön has been checked where engångsskatt is material, tender/share-sale gains are modelled when applicable, material external income has been considered, expected final tax is defensible, and the employee understands kvarskatt risk.
