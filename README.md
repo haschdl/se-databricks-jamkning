@@ -71,6 +71,19 @@ For a quick independent scan of this public repository:
 
 These are third-party services, not authoritative validators of Swedish tax law. The `evals/` directory contains invented scenarios for checking RSU withholding and tender-offer reasoning; it is **not** an automated CI test suite.
 
+## Behavioral evaluation
+
+The repository includes a [SkillTest](https://github.com/archplg/skilltest) contract in [`spec.yaml`](spec.yaml) and six **fictional** requests with expected behavior in [`evals/evals.json`](evals/evals.json). The earlier narrative scenarios remain in `evals/*.md`.
+
+Run locally after reviewing the inputs and any external model costs:
+
+```bash
+npx skilleval run . --dry-run
+npx skilleval run . --budget 3
+```
+
+The contract enables `run.include_files: [auto]` so model evaluations also see the tax, form, and payroll references. A static scan or a dry run does not establish behavioral correctness. No paid model run is enabled automatically by GitHub Actions.
+
 ## Privacy and limitations
 
 **Do not commit employee financial records or application data to this repository.** Do not include actual payslips, Shareworks statements, compensation letters, brokerage exports, names, account numbers, addresses, or completed Skatteverket forms. Use synthetic inputs in examples and evaluations.

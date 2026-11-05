@@ -1,0 +1,61 @@
+# SkillTest behavior contract. Evals contain synthetic examples, never employee records.
+# Test-year tax constants and form codes live only in references/.
+version: 1
+skill: databricks-sweden-jamkning
+language: [en, sv]
+
+triggers:
+  positive:
+    - "I'm a Databricks employee in Sweden. Should I apply for jämkning before my next RSU vest?"
+    - "My Shareworks RSUs were withheld as engångsskatt. Can you check my årslön and possible kvarskatt?"
+    - "Can you help me gather the payslips and Skatteverket figures for a jämkning application?"
+    - "I sold Databricks shares in an employee tender offer. How does genomsnittsmetoden affect my tax?"
+    - "Hur fungerar jämkning för RSU-vesting och bolåneränta?"
+    - "I have income outside Databricks. Should I adjust my Swedish preliminary tax withholding?"
+  negative:
+    - "Translate this Swedish workplace message into English."
+    - "Optimize this Spark SQL query for Databricks."
+    - "Create a slide deck about a customer workshop."
+    - "What is the best ETF to invest in for retirement?"
+    - "Explain how withholding works for an employee working only in the United States."
+
+assertions:
+  - id: factual-discipline
+    type: llm_judge
+    when: { tag: tax-analysis }
+    rubric: >-
+      Evaluate whether the answer follows the skill's safety and accuracy boundaries:
+      no invented tax-year thresholds, dates, rates, or unsupported assurances of a
+      refund; identify missing evidence or assumptions when decisive; distinguish
+      preliminary withholding from final liability; preserve the user's stated facts.
+      Use the skill's references as authority for tax-year specifics.
+    description: No fabricated tax rules or unjustified final-tax conclusions.
+  - id: swedish-response
+    type: llm_judge
+    when: { tag: swedish }
+    rubric: >-
+      The user's question is in Swedish. Reply substantially in understandable
+      Swedish, using the correct Swedish tax terminology, and give concrete steps.
+    description: Respond in the user's language for the Swedish case.
+
+thresholds:
+  pass_rate: 0.8
+  degraded_drop: 0.1
+  min_uplift: 0.1
+  trigger_rate: 0.8
+  judge_pass_score: 0.7
+
+run:
+  baseline: true
+  triggers: true
+  guard: true
+  include_files: [auto]
+  budget_usd: 3
+  concurrency: 3
+  temperature: 0
+  max_tokens: 2200
+
+guard:
+  fail_on: critical
+  allow: []
+  ignore_paths: []

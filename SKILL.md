@@ -1,6 +1,6 @@
 ---
 name: databricks-sweden-jamkning
-description: Help Databricks Sweden employees with Swedish jämkning / jamkning when they ask about preliminary tax, RSU tax withholding, engångsskatt, kvarskatt, tax refunds, Skatteverket, mortgage-interest deductions, ISK, commissions, or whether payroll is withholding too much or too little. Guide them through deciding whether jämkning is useful, collecting Databricks payroll and Shareworks evidence, reconciling actuals, forecasting full-year income, modelling uncertainty, preparing the Skatteverket application, and validating the result before submission.
+description: Use for Databricks Sweden employee questions such as "Should I apply for jämkning?", "Why is tax on my RSU vest so high?", "Will I owe kvarskatt?", "How do I fill in the Skatteverket application?", or "How should I calculate tax on a tender offer?" Covers Swedish preliminary tax, engångsskatt, Shareworks RSUs, commission, ISK, mortgage interest, capital gains, deductions, and payroll reconciliation. Do not use for unrelated Swedish translation, generic programming, other countries' tax rules, or investment recommendations unrelated to Swedish tax withholding.
 ---
 
 # Databricks Sweden — Jämkning

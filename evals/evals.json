@@ -1,0 +1,69 @@
+{
+  "skill_name": "databricks-sweden-jamkning",
+  "evals": [
+    {
+      "id": "high-earner-small-rsu-gap",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "rsu",
+        "edge"
+      ],
+      "prompt": "Synthetic scenario: I'm employed by Databricks Sweden, live in Stockholm and Databricks is my main employer. My full-year main-employer income is comfortably above the highest engångsskatt band listed in your 2026 reference. A future RSU vest is worth SEK 500,000. For this example use municipal tax 32.10%, burial fee 0.10%, church fee 0%; use the verified state-tax component and engångsskatt rate from your reference. Is the RSU obviously over-withheld, and should I apply for jämkning?",
+      "expected_output": "Compute an approximate marginal component total of 52.20%, compare with the verified high-band one-time withholding rate from the 2026 reference, and describe the difference as small (about 1.8 percentage points). Do not compare with average effective tax or promise a refund. Confirm payroll årslön, main-payer status, YTD withholding, mortgage-interest/other capital, and the official full-year tax picture before recommending jämkning."
+    },
+    {
+      "id": "payroll-arslon-understated",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "rsu",
+        "under-withholding"
+      ],
+      "prompt": "Synthetic Databricks Sweden payroll case: payroll used årslön SEK 640,000 and withheld 34% on a taxable RSU vest of SEK 200,000. Databricks is my main employer. This year's compensation actually includes SEK 600,000 regular salary, SEK 40,000 taxable benefits, SEK 120,000 commission, that SEK 200,000 vest, and another scheduled vest of SEK 250,000. For a rough marginal comparison use municipal 31.70%, burial 0.10%, church 0%, and the state component in the 2026 reference. Should I apply for jämkning to reduce RSU withholding?",
+      "expected_output": "Reconstruct expected full-year main-employer årslön as SEK 1,210,000 and flag payroll's SEK 640,000 as materially understated. Explain that the observed 34% withholding may create under-withholding/kvarskatt, not automatic excess tax. The supplied marginal components plus verified state component total about 51.8% when applicable, but exact final tax needs Skatteverket/evidence. Do not recommend reducing withholding; consider correct updated withholding or voluntary payment after verifying dates and interest rules."
+    },
+    {
+      "id": "tender-average-cost",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "tender"
+      ],
+      "prompt": "Synthetic Databricks employee tender: I own one class of shares acquired from three RSU vests: 100 at SEK 100 each, 100 at SEK 200 each and 100 at SEK 300 each, with no other acquisitions or prior sales. I sold 150 shares at SEK 400 each without fees or tax withheld on the capital gain. The tender portal selected the earliest two vest lots. What's the gain and what does it mean for jämkning?",
+      "expected_output": "Apply genomsnittsmetoden to all 300 same-class shares. Aggregate SEK cost 60,000, average SEK 200/share; sold cost basis SEK 30,000, proceeds SEK 60,000, taxable capital gain SEK 30,000. Do not use FIFO or portal-selected lots. Treat capital gain separately from employment income, note no withholding on gain in the scenario and model kvarskatt risk."
+    },
+    {
+      "id": "uncertain-other-income",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "uncertainty"
+      ],
+      "prompt": "Synthetic case: I work for Databricks Sweden and have RSU vestings and sales commissions, but I may also receive an external consulting payment. I don't know whether it will be paid this December or next February. I have some mortgage interest too. Can you tell me how to decide whether to apply for jämkning now without risking a tax bill?",
+      "expected_output": "Explain that jämkning changes preliminary withholding only. Separate actual year-to-date taxable pay and tax withheld from forecast; consider calendar-year recognition of external income rather than guessing, clarify classification and whether withholding occurs, and run base/conservative scenarios including commission, RSUs and mortgage interest. Prefer Skatteverket's official tax calculation, do not promise a refund or invent tax-year timing rules, and consider not lowering withholding aggressively when the uncertainty is material."
+    },
+    {
+      "id": "isk-fribelopp-open",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "application",
+        "isk"
+      ],
+      "prompt": "Synthetic case for the 2026 Skatteverket jämkning e-service: my estimated gross ISK schablonintäkt is SEK 25,000. Should I subtract the ISK tax-free allowance myself before entering it in the e-service? I also need to know whether the same field numbers apply on the paper form.",
+      "expected_output": "Use the verified e-service mapping in references/skatteverket-form-fields.md. Enter gross ISK schablonintäkt in the e-service field specified there; do not manually deduct the allowance. State that whether the jämkning e-service automatically applies the ISK deduction is OPEN/UNVERIFIED, and suggest the prescribed disclosure in Övriga upplysningar, including possible conservative capital-tax overstatement per references. The paper SKV 4302 numbers are UNVERIFIED; do not infer that they match the e-service."
+    },
+    {
+      "id": "swedish-next-year-vesting",
+      "lang": "sv",
+      "tags": [
+        "tax-analysis",
+        "swedish",
+        "timing"
+      ],
+      "prompt": "Jag jobbar på Databricks i Sverige och får RSU:er som vestar tidigt nästa år. Kan du förklara jämkning kort och berätta vilka underlag jag behöver från Shareworks, lönebesked och Skatteverket? När bör jag ansöka?",
+      "expected_output": "Reply in Swedish, concisely explain that jämkning adjusts preliminary withholding and not final tax. Ask for Skatteverket's income summary, YTD tax, recent payslips, Shareworks release summary, grant schedule, forecast salary/commission/benefits, other income and capital/deductions. Explain that an early-next-year vest favors considering the next-year application in the prior autumn window, but obtain exact verified dates from the relevant tax-year reference rather than applying old rates or deadlines to a new year."
+    }
+  ]
+}
