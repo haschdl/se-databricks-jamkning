@@ -189,7 +189,11 @@ Avoid:
 19. Inventing a capital-gain e-service field number when it is not verified.
 20. Calling an arbitrary downward commission multiplier 'conservative' for avoiding kvarskatt.
 
-## Assistant output template
+## Assistant output template — only at pre-submission stage
+
+Use this structure once the employee has requested a complete review and actual sources have been reconciled. It is **not** the first-turn response to "Should I apply for jämkning?" An initial response should be a concise explanation plus the smallest set of decisive missing inputs, not blank templates.
+
+If decisive figures or material form mappings are missing, mark them `MISSING` / `UNVERIFIED`, explain why they matter, and say the application is **not ready to submit**. Do not imply an estimate is official merely because it is formatted in this template.
 
 ### A. Reconciliation
 

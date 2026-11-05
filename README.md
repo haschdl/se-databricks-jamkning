@@ -82,7 +82,7 @@ npx skilleval run . --dry-run
 npx skilleval run . --budget 3
 ```
 
-The contract enables `run.include_files: [auto]` so model evaluations also see the tax, form, and payroll references. A static scan or a dry run does not establish behavioral correctness. No paid model run is enabled automatically by GitHub Actions.
+The contract enables `run.include_files: [auto]` so model evaluations also see the tax, form, and payroll references. It also checks a short first-turn triage against a structured pre-submission review. Out-of-scope phrases test whether this **skill activates**, not whether a general-purpose assistant must refuse legitimate unrelated requests. A static scan or a dry run does not establish behavioral correctness. No paid model run is enabled automatically by GitHub Actions.
 
 ## Privacy and limitations
 

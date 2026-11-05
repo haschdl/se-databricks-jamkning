@@ -87,6 +87,28 @@
       ],
       "prompt": "Fictional Databricks Sweden employee case: I have SEK 250,000 in sales commissions year-to-date, but future deal closing is unpredictable. Another SEK 300,000 could be paid this year or nothing could be paid. I have an RSU vest coming up and want to reduce my preliminary withholding. Could we just use 80% of my recent average commission as a conservative forecast and apply for jämkning?",
       "expected_output": "Do not treat an arbitrary 80% multiplier or downward-adjusted historical average as conservative for kvarskatt. Separate documented known/earned amounts from uncertain payments and explain cash/payment timing uncertainty. Build a best-estimate case based on evidence plus a distinct higher-income stress case reflecting possible additional commission, optionally a lower scenario, and consider RSUs. Clearly warn that without stronger evidence and official full-year tax calculation, a precise recommendation to reduce withholding would be unsafe."
+    },
+    {
+      "id": "brief-first-rsu-question",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "initial-triage",
+        "rsu"
+      ],
+      "prompt": "I work for Databricks Sweden. I have some Shareworks RSUs vesting soon, and I think payroll is taking too much tax. Is jämkning worth looking into?",
+      "expected_output": "Answer briefly that it is worth investigating but not automatically beneficial; explain preliminary withholding versus final tax, and warn RSU withholding may be close to marginal tax or may even be too low if payroll årslön is understated. Ask for a small, relevant subset of facts needed next (tax year, main payer, latest comparable YTD income/tax, upcoming RSU value or date, payslip withholding/årslön if available), not every document or empty final output blocks. Do not claim a refund or provide a lengthy form template."
+    },
+    {
+      "id": "full-pre-submission-review",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "pre-submission",
+        "application"
+      ],
+      "prompt": "Synthetic example: I'm at the final review step for a Swedish jämkning application. My Skatteverket YTD income of SEK 900,000 and withholding of SEK 300,000 reconcile exactly to payroll. Databricks is my main payer. Remaining salary is SEK 200,000 and the single remaining RSU vest is expected at SEK 150,000; no commission, other employment income, loans, ISK, or other capital events. I already ran the official Skatteverket calculator using these inputs; it gave an expected full-year final tax of SEK 490,000. Without jämkning, payroll expects to withhold another SEK 190,000. Please perform a full pre-submission review and show where I should enter the verified types of income. Don't invent anything else.",
+      "expected_output": "Use the late-stage structured format (historical YTD, projected total employment income SEK 1,250,000, capital/reductions absence, documented official final-tax result and remaining withholding calculation). Expected remaining tax = SEK 190,000, matching expected remaining withholding; explain that this synthetic scenario shows no clear over-withholding benefit. Only use verified e-service labels/codes from the current year-specific reference, and distinguish estimates from confirmed values. Do not invent additional tax rules or assume submission is advisable merely because the figures are supplied. State any missing checks needed before calling it ready."
     }
   ]
 }

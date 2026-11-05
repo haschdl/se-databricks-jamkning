@@ -1,6 +1,6 @@
 ---
 name: databricks-sweden-jamkning
-description: Use for Databricks Sweden employee questions such as "Should I apply for jämkning?", "Why is tax on my RSU vest so high?", "Will I owe kvarskatt?", "How do I fill in the Skatteverket application?", or "How should I calculate tax on a tender offer?" Covers Swedish preliminary tax, engångsskatt, Shareworks RSUs, commission, ISK, mortgage interest, capital gains, deductions, and payroll reconciliation. Do not use for unrelated Swedish translation, generic programming, other countries' tax rules, or investment recommendations unrelated to Swedish tax withholding.
+description: Use for Databricks Sweden employee questions such as "Should I apply for jämkning?", "Why is tax on my RSU vest so high?", "Will I owe kvarskatt?", "How do I fill in the Skatteverket application?", or "How should I calculate tax on a tender offer?" Covers Swedish preliminary tax, engångsskatt, Shareworks RSUs, commission, ISK, mortgage interest, capital gains, deductions, and payroll reconciliation. Do not activate for complete annual income-tax return preparation/filing, unrelated payslip translation, generic programming, other countries' tax rules, or investment recommendations unrelated to Swedish tax withholding.
 ---
 
 # Databricks Sweden — Jämkning
@@ -19,6 +19,21 @@ Use this skill to help a Databricks Sweden employee:
 8. validate the application before submission.
 
 This skill supports planning and data preparation. It does not replace Skatteverket guidance or professional tax advice.
+
+## Scope and interaction stages
+
+**Route by the user's task, not merely by the presence of a payslip or tax-related term.** The skill is for Swedish **preliminary withholding / jämkning**, not an entire annual tax declaration. A request only to translate a payslip, edit a document, or prepare a full tax return should not activate this skill. Such requests may still be handled normally by a general-purpose assistant or a better-matched tool; **do not refuse an otherwise permitted request simply because it is outside this skill**.
+
+Match the response to the stage the employee has actually reached:
+
+1. **Initial question / triage (little or no evidence).** Answer the question directly and briefly; explain that jämkning adjusts preliminary withholding and whether there is a plausible over- or under-withholding reason. Request only the **minimum decisive inputs** needed next—usually the tax year, main-payer status, YTD gross income and withheld tax, and the upcoming RSU/commission event if relevant. Start with the smallest useful subset rather than demanding every document at once. Do **not** print the full reconciliation/output template or fill it with empty placeholders.
+2. **Evidence collection / reconciliation.** Work with the actual data supplied. Compare Skatteverket YTD totals, payslips and Shareworks as appropriate; request only missing evidence that affects the next calculation. Report inconsistencies and cutoff-date gaps clearly. Do not claim a final-tax estimate when decisive inputs are absent.
+3. **Forecast / decision.** Once there is a defensible income, withholding and capital picture, compare best-estimate and higher-income stress scenarios and prefer Skatteverket's calculation for final tax. Explain possible benefit, downside risk and any `UNVERIFIED` rule; if uncertainty could change the recommendation, say so instead of choosing a precise withholding change.
+4. **Application / pre-submission review.** Only when the user asks to prepare/review an application and the underlying records have been reconciled, produce the structured reconciliation, forecast, capital, final-tax basis and field-by-field review below. Check the current form labels; never call the application ready if a material item or required field remains `UNVERIFIED`.
+
+If the employee asks a narrow factual or operational question, answer it without forcing the entire workflow. Offer the next useful step, not an exhaustive questionnaire.
+
+**Blind-spot rule:** identify unknown facts, their potential impact and the evidence needed to resolve them. Do not guess a field code, a tax amount, a deductible item or an action merely to produce a complete-looking recommendation.
 
 ## Read these references when needed
 
@@ -351,7 +366,9 @@ A jämkning application is not set-and-forget.
 
 # 10. Output format for the assistant
 
-Before recommending submission, produce four blocks.
+Use the complete structured output **only for a requested application/pre-submission review with sufficient evidence**; it is not the default format for a first conversation turn. During triage, provide a short answer and a targeted request for missing inputs. During data collection, show only the relevant reconciled figures or problems. Do not output an empty multi-section template unless the user explicitly asks for a template.
+
+Before recommending an actual submission, produce the blocks below and flag all unsupported entries as `MISSING` or `UNVERIFIED`. Missing material entries mean **not ready to submit**, regardless of presentation quality.
 
 ## A. Reconciliation
 
@@ -391,7 +408,7 @@ Other:
 
 ## D. Application fields
 
-List every non-zero Skatteverket field/label and its proposed value. Mark estimated fields `ESTIMATE` and unresolved inputs `UNVERIFIED`.
+List every verified non-zero Skatteverket field/label and its proposed value. Mark estimated fields `ESTIMATE` and unresolved inputs `UNVERIFIED`. Do not substitute an invented field for a blind spot or present a complete-looking field map when required capital entries are not verified.
 
 Do not recommend submission until actual YTD income and tax are reconciled, all known future RSU vestings are included, payroll årslön has been checked where engångsskatt is material, tender/share-sale gains are modelled when applicable, material external income has been considered, expected final tax is defensible, and the employee understands the `kvarskatt` risk.
 

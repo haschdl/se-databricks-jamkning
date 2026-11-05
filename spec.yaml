@@ -18,6 +18,8 @@ triggers:
     - "Create a slide deck about a customer workshop."
     - "What is the best ETF to invest in for retirement?"
     - "Explain how withholding works for an employee working only in the United States."
+    - "Translate this Swedish Databricks payslip into English for my accountant."
+    - "Help me complete and file my entire Swedish annual income tax return."
 
 assertions:
   - id: factual-discipline
@@ -50,6 +52,30 @@ assertions:
       evidence. If uncertainty is material, explicitly warn and withhold a
       precise recommendation.
     description: Commission estimate is not biased downward.
+  - id: staged-initial-triage
+    type: llm_judge
+    when: { tag: initial-triage }
+    rubric: >-
+      For a broad early question with no payroll records, answer the user's
+      actual question briefly, identify the essential preliminary vs final
+      tax distinction and any plausible withholding risk, and request only
+      the smallest set of decisive next inputs. Do not produce empty four-
+      block reconciliation, forecast and application templates or ask for
+      a full evidence package prematurely. Avoid unjustified numerical
+      conclusions or promising a refund.
+    description: Short, stage-appropriate initial response.
+  - id: staged-pre-submission
+    type: llm_judge
+    when: { tag: pre-submission }
+    rubric: >-
+      When the user specifically requests a full pre-submission review,
+      give a structured reconciliation, remaining-year forecast, capital
+      and reductions review, final-tax method and application-field check;
+      use supplied values consistently and label missing or unverified
+      items. Do not claim submission readiness if required evidence or
+      fields are still missing. This extensive format is appropriate only
+      for this explicit late-stage task.
+    description: Evidence-backed structured submission review.
   - id: swedish-response
     type: llm_judge
     when: { tag: swedish }
