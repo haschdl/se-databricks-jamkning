@@ -119,7 +119,7 @@ When the model indicates under-withholding, present alternatives rather than ass
 ### Forecast
 
 - salary changes apply from the correct month;
-- commission forecast method is documented;
+- commission forecast method is documented, with a defensible best estimate and a separate evidence-based higher-income stress case; no arbitrary downward prudence multiplier;
 - all remaining RSU grants are included;
 - future vest value uses the documented FMV and FX assumption;
 - recurring benefits/allowances are included;
@@ -150,7 +150,9 @@ When the model indicates under-withholding, present alternatives rather than ass
 - future-income values cover only the remainder of the year;
 - no income is counted twice;
 - future RSU vestings are included in employment income;
-- capital gains are included where the e-service requires them;
+- capital gains are classified under the verified capital section, not an employment-income/no-withholding field;
+- a verified current e-service field/label exists for every material capital gain; otherwise mark `UNVERIFIED` and do not present submission-ready entries;
+- a free-text explanation is not treated as a substitute for a required numeric capital entry;
 - main-payer amount is consistent;
 - free-text assumptions are concise and accurate.
 
@@ -183,6 +185,9 @@ Avoid:
 15. Using an unexplained hand-modelled final-tax number.
 16. Failing to update the model after a material forecast change.
 17. Optimizing to the last krona when major inputs remain uncertain.
+18. Using an employment-income no-withholding field for a share-sale capital gain.
+19. Inventing a capital-gain e-service field number when it is not verified.
+20. Calling an arbitrary downward commission multiplier 'conservative' for avoiding kvarskatt.
 
 ## Assistant output template
 

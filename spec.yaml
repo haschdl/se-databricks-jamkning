@@ -30,6 +30,26 @@ assertions:
       preliminary withholding from final liability; preserve the user's stated facts.
       Use the skill's references as authority for tax-year specifics.
     description: No fabricated tax rules or unjustified final-tax conclusions.
+  - id: correct-capital-field-guardrail
+    type: llm_judge
+    when: { tag: capital-field }
+    rubric: >-
+      The assistant does not place a tender/share-sale capital gain in an
+      employment-income no-withholding box; does not fabricate a capital field
+      code; says the precise capital-gain e-service field is UNVERIFIED in the
+      references and requests verification against official capital-section
+      instructions before giving submission-ready entries.
+    description: No invented or misclassified capital-gain field.
+  - id: defensible-commission-forecast
+    type: llm_judge
+    when: { tag: commission }
+    rubric: >-
+      Distinguish an evidence-based best estimate from a separate higher-income
+      stress case for kvarskatt risk; do not apply an arbitrary downward
+      prudence multiplier or recommend lower withholding without sufficient
+      evidence. If uncertainty is material, explicitly warn and withhold a
+      precise recommendation.
+    description: Commission estimate is not biased downward.
   - id: swedish-response
     type: llm_judge
     when: { tag: swedish }

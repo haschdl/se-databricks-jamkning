@@ -88,7 +88,7 @@ When material inputs are uncertain:
 - mark estimates explicitly;
 - model at least a base case and a conservative case.
 
-For uncertain non-Databricks income or share-sale proceeds, test plausible scenarios. If the recommendation changes materially, do not optimize aggressively.
+For uncertain commission, non-Databricks income, or share-sale proceeds, test plausible **higher-income** outcomes as well as a best estimate. Do not lower commission projections with an arbitrary `prudence factor` and call that conservative for avoiding `kvarskatt`. If the recommendation changes materially, report the uncertainty and do not optimize aggressively.
 
 # 3. Collect source data
 
@@ -201,6 +201,8 @@ interest/dividend income
 
 For a Databricks tender/share sale, use the Swedish average-cost method described in the Databricks reference. Do not assign the sold shares a per-vest lot basis.
 
+**Guardrail:** calculating a capital gain does not verify where it belongs in the jämkning e-service. The specific capital-gain entry is `UNVERIFIED` until checked against the current capital-section labels or official Skatteverket instructions. Do not infer it from an employment-income field that mentions no withholding. See [references/skatteverket-form-fields.md](references/skatteverket-form-fields.md).
+
 Use the year-specific constants reference to determine whether loan interest is deductible. Do not assume that an interest deduction available in a prior year still applies.
 
 Do not simply subtract mortgage interest from salary.
@@ -300,7 +302,7 @@ General rules:
 - historical boxes use YTD actuals;
 - future-income boxes contain only the remainder of the year;
 - include future RSU vestings in remaining taxable employment income;
-- include material capital gains in the capital model/application where the e-service requires them;
+- model material capital gains separately from employment income and identify their correct e-service destination **only when verified**; if the capital-gain field remains `UNVERIFIED`, warn about the gap, request the live capital-section label or official instruction, and do not declare the application submission-ready;
 - identify the main payer correctly;
 - enter only deductions/reductions that actually apply;
 - avoid double-counting income already present in YTD actuals.
@@ -321,6 +323,7 @@ Before recommending submission, verify:
 - all remaining vestings are included;
 - tender/share-sale gains use the average cost basis across all same-kind shares rather than sold-lot basis;
 - capital gains with no payroll withholding are included in kvarskatt risk;
+- the current e-service field for each material capital-gain item has been verified (otherwise report `UNVERIFIED` and stop short of a submission recommendation);
 - salary changes and commission assumptions are applied in the correct periods;
 - benefits, allowances, and salary exchange are treated consistently with payroll;
 - external income has been considered;

@@ -237,12 +237,13 @@ Collect:
 - salary exchange (`löneväxling`);
 - unpaid leave or other material changes.
 
-If future commission is unknown, use a documented method such as:
+If future commission is unknown, **do not invent a prudence multiplier or automatically reduce historical commission averages**. Use this approach:
 
-```text
-forecast monthly commission
-= average(last N months actual commission) × prudence factor
-```
+1. Separate **earned/contractually known commission** from **unearned and uncertain future commission**. Confirm the payroll period in which each amount is expected to be taxable.
+2. Build a **best-estimate** forecast from documented inputs (for example, recent commission history, pipeline/attainment information provided by the employee, and known seasonality). Explain the method and why it is appropriate; a simple trailing average is only a starting point if the pay pattern supports it.
+3. Build a **higher-income stress case** to test `kvarskatt` exposure if future commission exceeds the best estimate. Choose the upside scenario from available evidence or user-supplied assumptions, **not an invented fixed multiplier**.
+4. Optionally test a lower-income outcome to understand the range, but never call it the *conservative tax-withholding* estimate. Do not use an unexplained downward factor to justify reducing preliminary withholding.
+5. If the range is wide or the evidence is too weak to forecast responsibly, label the future commission `ESTIMATE / HIGH UNCERTAINTY`, show the sensitivity qualitatively, and **avoid a precise withholding recommendation until the blind spot is resolved**.
 
 Do not use total gross payroll as a proxy for commission.
 

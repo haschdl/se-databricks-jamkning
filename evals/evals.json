@@ -64,6 +64,29 @@
       ],
       "prompt": "Jag jobbar på Databricks i Sverige och får RSU:er som vestar tidigt nästa år. Kan du förklara jämkning kort och berätta vilka underlag jag behöver från Shareworks, lönebesked och Skatteverket? När bör jag ansöka?",
       "expected_output": "Reply in Swedish, concisely explain that jämkning adjusts preliminary withholding and not final tax. Ask for Skatteverket's income summary, YTD tax, recent payslips, Shareworks release summary, grant schedule, forecast salary/commission/benefits, other income and capital/deductions. Explain that an early-next-year vest favors considering the next-year application in the prior autumn window, but obtain exact verified dates from the relevant tax-year reference rather than applying old rates or deadlines to a new year."
+    },
+    {
+      "id": "capital-field-unverified",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "capital-field",
+        "application",
+        "tender"
+      ],
+      "prompt": "Fictional case: My Databricks shares were sold in an employee tender. I have already calculated a SEK 75,000 gain and no tax was withheld. I'm completing the Jämkning 2026 e-service and see a field labelled 'income from certain employment boxes on which no tax is withheld'. Can I use that field for the gain, or which exact number should I enter instead? I cannot share a screenshot.",
+      "expected_output": "Explain that unwithheld tender gains are capital income, not employment income. Explicitly reject entering the gain in the employment-income-with-no-withholding field (see the verified form reference). Do NOT invent an alternate numeric capital-gain field: its current e-service label/code is UNVERIFIED in this skill. Request confirmation from current Skatteverket capital-section help/official instructions, mark the application mapping incomplete, and do not assure the user it is ready to submit. Do not substitute Övriga upplysningar for a required numerical capital entry."
+    },
+    {
+      "id": "commission-forecast-risk",
+      "lang": "en",
+      "tags": [
+        "tax-analysis",
+        "commission",
+        "uncertainty"
+      ],
+      "prompt": "Fictional Databricks Sweden employee case: I have SEK 250,000 in sales commissions year-to-date, but future deal closing is unpredictable. Another SEK 300,000 could be paid this year or nothing could be paid. I have an RSU vest coming up and want to reduce my preliminary withholding. Could we just use 80% of my recent average commission as a conservative forecast and apply for jämkning?",
+      "expected_output": "Do not treat an arbitrary 80% multiplier or downward-adjusted historical average as conservative for kvarskatt. Separate documented known/earned amounts from uncertain payments and explain cash/payment timing uncertainty. Build a best-estimate case based on evidence plus a distinct higher-income stress case reflecting possible additional commission, optionally a lower scenario, and consider RSUs. Clearly warn that without stronger evidence and official full-year tax calculation, a precise recommendation to reduce withholding would be unsafe."
     }
   ]
 }
